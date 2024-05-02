@@ -1,4 +1,5 @@
 ﻿using JwtAuthApi.core.Dtos;
+using JwtAuthApi.core.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
 namespace JwtAuthApi.Controllers;
@@ -6,24 +7,22 @@ namespace JwtAuthApi.Controllers;
 /// <summary>
 /// 
 /// </summary>
-
 [ApiController]
 [Route("[controller]")]
-public class AuthController() : ControllerBase
+public class AuthController(IAuthService authService) : ControllerBase
 {
     /// <summary>
-    /// 
+    /// Register user with given information.
     /// </summary>
-    /// <param name="registrationDetails"></param>
+    /// <param name="registrationDetails"><see cref="RegistrationDto"/></param>
     /// <returns></returns>
-    /// <exception cref="NotImplementedException"></exception>
     [HttpPost]
     [Route("signUp")]
     public Task SignUp(RegistrationDto registrationDetails)
     {
-        throw new NotImplementedException();
+        return authService.RegisterUserAsync(registrationDetails);
     }
-    
+
     /// <summary>
     /// 
     /// </summary>
@@ -34,6 +33,7 @@ public class AuthController() : ControllerBase
     [Route("signIn")]
     public Task SignIn(LogInDto userDetails)
     {
+        authService.LogInAsync(userDetails);
         throw new NotImplementedException();
     }
 }
