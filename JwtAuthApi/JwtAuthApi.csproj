@@ -21,7 +21,8 @@
     </ItemGroup>
 
     <ItemGroup>
-        <Folder Include="core\"/>
+        <Folder Include="core\Interfaces\" />
+        <Folder Include="core\Services\" />
     </ItemGroup>
 
 </Project>
