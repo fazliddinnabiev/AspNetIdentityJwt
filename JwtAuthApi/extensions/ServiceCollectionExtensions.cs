@@ -1,4 +1,6 @@
 ﻿using System.Text;
+using JwtAuthApi.core.Interfaces;
+using JwtAuthApi.core.Services;
 using JwtAuthApi.infrastructure;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -94,8 +96,18 @@ public static class ServiceCollectionExtensions
                 Type = SecuritySchemeType.Http,
                 Scheme = "Bearer",
                 BearerFormat = "JWT",
-                Description = "JWT Authorization header using the Bearer scheme. Example: \"Authorization: Bearer {token}\""
+                Description =
+                    "JWT Authorization header using the Bearer scheme. Example: \"Authorization: Bearer {token}\""
             });
         });
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="serviceCollection"></param>
+    public static void AddUserDefinedServices(this IServiceCollection serviceCollection)
+    {
+        serviceCollection.AddScoped<IAuthService, AuthService>();
     }
 }

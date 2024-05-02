@@ -10,6 +10,7 @@ builder.Services.AddIdentity();
 builder.Services.AddUserManager();
 builder.Services.AddAuthentication(builder.Configuration);
 builder.Services.AddSwaggerGenRegistry();
+builder.Services.AddUserDefinedServices();
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
