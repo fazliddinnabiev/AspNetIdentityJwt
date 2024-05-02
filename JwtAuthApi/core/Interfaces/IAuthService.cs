@@ -12,7 +12,7 @@ public interface IAuthService
     /// </summary>
     /// <param name="registrationDetails"></param>
     /// <returns></returns>
-    Task RegisterUserAsync(RegistrationDto registrationDetails);
+    Task<bool> RegisterUserAsync(RegistrationDto registrationDetails);
     
     /// <summary>
     /// 
