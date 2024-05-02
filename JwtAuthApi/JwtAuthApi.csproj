@@ -20,9 +20,4 @@
         <PackageReference Include="Swashbuckle.AspNetCore.Filters" Version="8.0.2"/>
     </ItemGroup>
 
-    <ItemGroup>
-        <Folder Include="core\Interfaces\" />
-        <Folder Include="core\Services\" />
-    </ItemGroup>
-
 </Project>
