@@ -10,7 +10,7 @@ using Microsoft.OpenApi.Models;
 namespace JwtAuthApi.extensions;
 
 /// <summary>
-/// Represents extension method of <see cref="IServiceCollection"/> to inject dependencies
+/// Represents extension methods of <see cref="IServiceCollection"/> to inject dependencies.
 /// </summary>
 public static class ServiceCollectionExtensions
 {
