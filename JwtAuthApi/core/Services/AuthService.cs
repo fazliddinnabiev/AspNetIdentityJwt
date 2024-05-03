@@ -1,6 +1,7 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using System.Transactions;
 using JwtAuthApi.core.Dtos;
 using JwtAuthApi.core.Interfaces;
 using Microsoft.AspNetCore.Identity;
@@ -11,7 +12,10 @@ namespace JwtAuthApi.core.Services;
 /// <summary>
 /// Represents the authentication service for user
 /// </summary>
-public class AuthService(UserManager<IdentityUser> userManager, RoleManager<IdentityRole> roleManager, IConfiguration configuration) : IAuthService
+public class AuthService(
+    UserManager<IdentityUser> userManager,
+    RoleManager<IdentityRole> roleManager,
+    IConfiguration configuration) : IAuthService
 {
     /// <summary>
     /// Registers user with provided user details.
@@ -27,7 +31,7 @@ public class AuthService(UserManager<IdentityUser> userManager, RoleManager<Iden
         };
 
         var result = await userManager.CreateAsync(user, registrationDetails.Password);
-
+        var roleResult = await userManager.AddToRoleAsync(user: user, registrationDetails.UserRole.ToString());
         return result.Succeeded;
     }
 

@@ -1,4 +1,6 @@
-﻿namespace JwtAuthApi.core.Dtos;
+﻿using JwtAuthApi.core.Enums;
+
+namespace JwtAuthApi.core.Dtos;
 
 /// <summary>
 /// Dto that is used to represent registration details.
@@ -14,6 +16,11 @@ public class RegistrationDto
     /// Alphanumeric characters 
     /// </summary>
     public string Password { get; set; } = string.Empty;
+
+    /// <summary>
+    /// Represents user role.
+    /// </summary>
+    public UserRoles UserRole { get; set; }
 
     /// <summary>
     /// User's Full name.
