@@ -28,7 +28,7 @@ public sealed class AuthController(IAuthService authService) : ControllerBase
     /// </summary>
     /// <param name="userDetails">The login details provided by the user.</param>
     /// <returns>string that represents JWT token.</returns>
-    [HttpGet]
+    [HttpPost]
     [Route("signIn")]
     public Task<string> SignIn(LogInDto userDetails)
     {

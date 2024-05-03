@@ -43,7 +43,7 @@ public static class ServiceCollectionExtensions
     }
 
     /// <summary>
-    /// Registers <see cref="UserManager{TUser}"/> , <see cref="SignInManager{TUser}"/>, and <see cref="RoleManager{TRole}"/> services.
+    /// Registers <see cref="UserManager{TUser}"/> <see cref="SignInManager{TUser}"/>, and <see cref="RoleManager{TRole}"/> services.
     /// </summary>
     /// <param name="serviceCollection">An instance of type <see cref="IServiceCollection"/>.</param>
     public static void AddUserManager(this IServiceCollection serviceCollection)
