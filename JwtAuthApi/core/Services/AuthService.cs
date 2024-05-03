@@ -11,10 +11,7 @@ namespace JwtAuthApi.core.Services;
 /// <summary>
 /// Represents the authentication service for user
 /// </summary>
-public class AuthService(
-    UserManager<IdentityUser> userManager,
-    RoleManager<IdentityRole> roleManager,
-    IConfiguration configuration) : IAuthService
+public class AuthService(UserManager<IdentityUser> userManager, RoleManager<IdentityRole> roleManager, IConfiguration configuration) : IAuthService
 {
     /// <summary>
     /// Registers user with provided user details.
@@ -77,7 +74,7 @@ public class AuthService(
 
         var jwtKeyBytes = Encoding.UTF8.GetBytes(jwtKey);
         var symmetricKey = new SymmetricSecurityKey(jwtKeyBytes);
-        var signingKeyCredentials = new SigningCredentials(symmetricKey, SecurityAlgorithms.HmacSha512);
+        var signingKeyCredentials = new SigningCredentials(symmetricKey, SecurityAlgorithms.HmacSha256);
 
         var claims = new List<Claim>()
         {
