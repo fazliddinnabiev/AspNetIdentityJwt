@@ -126,7 +126,7 @@ public static class ServiceCollectionExtensions
     }
 
     /// <summary>
-    /// 
+    /// Registers services user defined services.
     /// </summary>
     /// <param name="serviceCollection"></param>
     public static void AddUserDefinedServices(this IServiceCollection serviceCollection)

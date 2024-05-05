@@ -10,20 +10,20 @@ public class RegistrationDto
     /// <summary>
     /// Unique email address.
     /// </summary>
-    public string Email { get; set; } = string.Empty;
+    public string Email { get; init; } = string.Empty;
 
     /// <summary>
-    /// Alphanumeric characters 
+    /// Alphanumeric characters.
     /// </summary>
-    public string Password { get; set; } = string.Empty;
+    public string Password { get; init; } = string.Empty;
 
     /// <summary>
     /// Represents user role.
     /// </summary>
-    public IdentityRoles IdentityRole { get; set; }
+    public IdentityRoles IdentityRole { get; init; }
 
     /// <summary>
     /// User's Full name.
     /// </summary>
-    public string FullName { get; set; } = string.Empty;
+    public string FullName { get; init; } = string.Empty;
 }

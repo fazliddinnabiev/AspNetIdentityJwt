@@ -3,21 +3,21 @@
 namespace JwtAuthApi.core.Interfaces;
 
 /// <summary>
-/// 
+/// Represents an interface for authentication services.
 /// </summary>
 public interface IAuthService
 {
     /// <summary>
-    /// 
+    /// Registers a user asynchronously.
     /// </summary>
-    /// <param name="registrationDetails"></param>
-    /// <returns></returns>
+    /// <param name="registrationDetails">User registration details. See <see cref="RegistrationDto"/> for more information.</param>
+    /// <returns>True if registration is successful; otherwise, false.</returns>
     Task<bool> RegisterUserAsync(RegistrationDto registrationDetails);
-    
+
     /// <summary>
-    /// 
+    /// Logs in a user asynchronously.
     /// </summary>
-    /// <param name="logInDetails"></param>
-    /// <returns></returns>
-    Task<string> LogInAsync (LogInDto logInDetails);
+    /// <param name="logInDetails">User login details. See <see cref="LogInDto"/> for more information.</param>
+    /// <returns>A JWT token upon successful login.</returns>
+    Task<string> LogInAsync(LogInDto logInDetails);
 }

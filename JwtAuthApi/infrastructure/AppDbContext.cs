@@ -11,9 +11,9 @@ namespace JwtAuthApi.infrastructure;
 public class AppDbContext(DbContextOptions<AppDbContext> options) : IdentityDbContext(options: options)
 {
     /// <summary>
-    /// 
+    /// Configures the model for the database context during entity framework migrations.
     /// </summary>
-    /// <param name="modelBuilder"></param>
+    /// <param name="modelBuilder">The model builder instance.</param>
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
