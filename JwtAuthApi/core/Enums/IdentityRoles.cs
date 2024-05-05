@@ -3,7 +3,7 @@
 /// <summary>
 /// Represents available user roles.
 /// </summary>
-public enum UserRoles
+public enum IdentityRoles
 {
     /// <summary>
     /// Role1

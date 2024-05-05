@@ -17,7 +17,7 @@ public sealed class RoleConfigurations : IEntityTypeConfiguration<IdentityRole>
     /// <param name="builder"></param>
     public void Configure(EntityTypeBuilder<IdentityRole> builder)
     {
-        string[] userRoles = Enum.GetNames(typeof(UserRoles));
+        string[] userRoles = Enum.GetNames(typeof(IdentityRoles));
         IdentityRole[] identityRoles = GetRoles(userRoles);
         builder.HasData(identityRoles);
     }

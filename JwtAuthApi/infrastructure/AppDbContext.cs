@@ -10,6 +10,10 @@ namespace JwtAuthApi.infrastructure;
 /// <param name="options">The options for configuring the context.</param>
 public class AppDbContext(DbContextOptions<AppDbContext> options) : IdentityDbContext(options: options)
 {
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="modelBuilder"></param>
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);

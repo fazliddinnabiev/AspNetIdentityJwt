@@ -1,21 +1,17 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
-using System.Transactions;
 using JwtAuthApi.core.Dtos;
 using JwtAuthApi.core.Interfaces;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
 
-namespace JwtAuthApi.core.Services;
+namespace JwtAuthApi.Services;
 
 /// <summary>
 /// Represents the authentication service for user
 /// </summary>
-public class AuthService(
-    UserManager<IdentityUser> userManager,
-    RoleManager<IdentityRole> roleManager,
-    IConfiguration configuration) : IAuthService
+public class AuthService(UserManager<IdentityUser> userManager, IConfiguration configuration) : IAuthService
 {
     /// <summary>
     /// Registers user with provided user details.
@@ -31,7 +27,7 @@ public class AuthService(
         };
 
         var result = await userManager.CreateAsync(user, registrationDetails.Password);
-        var roleResult = await userManager.AddToRoleAsync(user: user, registrationDetails.UserRole.ToString());
+        await userManager.AddToRoleAsync(user: user, registrationDetails.IdentityRole.ToString());
         return result.Succeeded;
     }
 
@@ -59,8 +55,10 @@ public class AuthService(
         {
             throw new Exception("Email or password is incorrect.");
         }
+        
+        var userRoles = await userManager.GetRolesAsync(user);
 
-        return GenerateJwtAsync(user);
+        return GenerateJwtAsync(user, userRoles);
     }
 
     /// <summary>
@@ -68,7 +66,7 @@ public class AuthService(
     /// <param name="user">Authenticated user.</param>
     /// </summary>
     /// <returns>JWT token.</returns>
-    private string GenerateJwtAsync(IdentityUser user)
+    private string GenerateJwtAsync(IdentityUser user, IList<string> userRoles)
     {
         var jwtKey = configuration.GetSection("JWT:Key").Value;
         if (jwtKey is null)
@@ -86,6 +84,11 @@ public class AuthService(
             new Claim("userName", user.UserName)
         };
 
+        foreach (var userRole in userRoles)
+        {
+            claims.Add(new Claim(ClaimTypes.Role, userRole));
+        }
+
         var token = new JwtSecurityToken(
             issuer: configuration.GetSection("JWT:ValidIssuer").Value,
             claims: claims,
@@ -96,4 +99,4 @@ public class AuthService(
         var jwt = new JwtSecurityTokenHandler().WriteToken(token);
         return jwt;
     }
-}
+}   

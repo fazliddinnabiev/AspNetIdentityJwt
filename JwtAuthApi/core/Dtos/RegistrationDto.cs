@@ -20,7 +20,7 @@ public class RegistrationDto
     /// <summary>
     /// Represents user role.
     /// </summary>
-    public UserRoles UserRole { get; set; }
+    public IdentityRoles IdentityRole { get; set; }
 
     /// <summary>
     /// User's Full name.

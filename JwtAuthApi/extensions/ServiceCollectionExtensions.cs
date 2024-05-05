@@ -1,7 +1,8 @@
 ﻿using System.Text;
 using JwtAuthApi.core.Interfaces;
-using JwtAuthApi.core.Services;
 using JwtAuthApi.infrastructure;
+using JwtAuthApi.Services;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -61,24 +62,31 @@ public static class ServiceCollectionExtensions
     /// <exception cref="ArgumentNullException">An exception is thrown if the token secret is not provided.</exception>
     public static void AddAuthentication(this IServiceCollection serviceCollection, IConfiguration configuration)
     {
-        serviceCollection.AddAuthentication().AddJwtBearer(options =>
-        {
-            string? jwtKey = configuration.GetSection("JWT:Key").Value;
-            if (jwtKey is null)
+        serviceCollection.AddAuthentication(options =>
             {
-                throw new ArgumentNullException(nameof(jwtKey));
-            }
+                options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            })
+            .AddJwtBearer(options =>
+            {
+                string? jwtKey = configuration.GetSection("JWT:Key").Value;
+                if (jwtKey is null)
+                {
+                    throw new ArgumentNullException(nameof(jwtKey));
+                }
 
-            options.TokenValidationParameters = new TokenValidationParameters
-            {
-                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey)),
-                ValidIssuer = configuration.GetSection("JWT:ValidIssuer").Value,
-                ValidateIssuerSigningKey = true,
-                ValidateIssuer = true,
-                ValidateLifetime = true,
-                SaveSigninToken = true
-            };
-        });
+                options.TokenValidationParameters = new TokenValidationParameters
+                {
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey)),
+                    ValidIssuer = configuration.GetSection("JWT:ValidIssuer").Value,
+                    ValidateIssuerSigningKey = true,
+                    ValidateIssuer = true,
+                    ValidateAudience = false,
+                    ValidateLifetime = true,
+                    SaveSigninToken = true
+                };
+            });
     }
 
     /// <summary>
@@ -96,8 +104,7 @@ public static class ServiceCollectionExtensions
                 Type = SecuritySchemeType.Http,
                 Scheme = "Bearer",
                 BearerFormat = "JWT",
-                Description =
-                    "JWT Authorization header using the Bearer scheme. Example: \"Authorization: Bearer {token}\""
+                Description = "JWT Authorization header using the Bearer scheme. Example: \"Authorization: Bearer {token}\""
             });
         });
     }
