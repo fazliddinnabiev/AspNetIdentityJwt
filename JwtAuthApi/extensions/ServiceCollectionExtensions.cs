@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System.Reflection;
+using System.Text;
 using JwtAuthApi.core.Interfaces;
 using JwtAuthApi.infrastructure;
 using JwtAuthApi.Services;
@@ -97,14 +98,36 @@ public static class ServiceCollectionExtensions
     {
         serviceCollection.AddSwaggerGen(options =>
         {
-            options.AddSecurityDefinition(name: "Bearer", new OpenApiSecurityScheme
+            var xmlFilePath = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+            options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFilePath));
+
+            options.SwaggerDoc(name: "v1", info: new OpenApiInfo
+            {
+                Title = "Authentication and authorization",
+                Version = "V1",
+                Description = "ASP.NET web api",
+                TermsOfService = new Uri("https://example.com/terms"),
+                Contact = new OpenApiContact
+                {
+                    Name = "Example Contact",
+                    Email = "test@test.com"
+                },
+                License = new OpenApiLicense
+                {
+                    Name = "Example License",
+                    Url = new Uri("https://example.com/license")
+                }
+            });
+
+            options.AddSecurityDefinition(name: "Bearer", securityScheme: new OpenApiSecurityScheme
             {
                 In = ParameterLocation.Header,
                 Type = SecuritySchemeType.Http,
                 Scheme = "Bearer",
                 BearerFormat = "JWT",
                 Name = "Authorization",
-                Description = "JWT Authorization header using the Bearer scheme. Example: \"Authorization: Bearer {token}\""
+                Description =
+                    "JWT Authorization header using the Bearer scheme. Example: \"Authorization: Bearer {token}\""
             });
             options.AddSecurityRequirement(new OpenApiSecurityRequirement
             {
@@ -133,4 +156,9 @@ public static class ServiceCollectionExtensions
     {
         serviceCollection.AddScoped<IAuthService, AuthService>();
     }
+
+    // public static void AddHealthChecks(this IServiceCollection serviceCollection)
+    // {
+    //     
+    // }
 }
