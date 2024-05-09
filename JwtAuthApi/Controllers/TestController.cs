@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using JwtAuthApi.core.Constants;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 
 namespace JwtAuthApi.Controllers;
 
@@ -15,6 +17,7 @@ public class TestController : ControllerBase
     /// <returns>string if authorized.</returns>
     [HttpGet]
     [Route("role1")]
+    [Authorize(Roles = UserRoles.Role1)]
     public string TestRole1()
     {
         return "Authorized for Role1";
@@ -26,6 +29,7 @@ public class TestController : ControllerBase
     /// <returns>string if authorized</returns>
     [HttpGet]
     [Route("role2")]
+    [Authorize(Roles = UserRoles.Role2)]
     public string TestRole2()
     {
         return "Authorized for Role2";
