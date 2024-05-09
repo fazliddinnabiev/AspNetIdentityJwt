@@ -1,11 +1,13 @@
 ﻿using System.Reflection;
 using System.Text;
+using HealthChecks.SqlServer;
 using JwtAuthApi.core.Interfaces;
 using JwtAuthApi.infrastructure;
 using JwtAuthApi.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 
@@ -20,15 +22,15 @@ public static class ServiceCollectionExtensions
     /// Adds the DbContext service to the specified IServiceCollection.
     /// </summary>
     /// <param name="serviceCollection">The collection of services to add the DbContext to.</param>
-    /// <param name="configuration">The IConfiguration instance</param>
+    /// <param name="configuration">The IConfiguration instance.</param>
     public static void AddDbContext(this IServiceCollection serviceCollection, IConfiguration configuration)
     {
         serviceCollection.AddDbContext<AppDbContext>(options =>
-            options.UseSqlServer(configuration.GetConnectionString("LocalDb")));
+            options.UseSqlServer(configuration.GetConnectionString("authDb")));
     }
 
     /// <summary>
-    /// Registers <see cref="IdentityUser"/> and <see cref="IdentityRole"/>
+    /// Registers <see cref="IdentityUser"/> and <see cref="IdentityRole"/>.
     /// </summary>
     /// <param name="serviceCollection">An instance of type <see cref="IServiceCollection"/>.</param>
     public static void AddIdentity(this IServiceCollection serviceCollection)
@@ -59,7 +61,7 @@ public static class ServiceCollectionExtensions
     ///  Registers authentication with JWT token.
     /// </summary>
     /// <param name="serviceCollection">An instance of type <see cref="IServiceCollection"/>.</param>
-    /// <param name="configuration">An instance of type <see cref="IConfiguration"/></param>
+    /// <param name="configuration">An instance of type <see cref="IConfiguration"/>.</param>
     /// <exception cref="ArgumentNullException">An exception is thrown if the token secret is not provided.</exception>
     public static void AddAuthentication(this IServiceCollection serviceCollection, IConfiguration configuration)
     {
@@ -151,14 +153,39 @@ public static class ServiceCollectionExtensions
     /// <summary>
     /// Registers services user defined services.
     /// </summary>
-    /// <param name="serviceCollection"></param>
+    /// <param name="serviceCollection">An instance of type <see cref="IServiceCollection"/>.</param>
     public static void AddUserDefinedServices(this IServiceCollection serviceCollection)
     {
         serviceCollection.AddScoped<IAuthService, AuthService>();
     }
 
-    // public static void AddHealthChecks(this IServiceCollection serviceCollection)
-    // {
-    //     
-    // }
+    /// <summary>
+    /// Register health check services.
+    /// </summary>
+    /// <param name="serviceCollection">An instance of type <see cref="IServiceCollection"/>.</param>
+    /// <param name="configuration">The IConfiguration instance.</param>
+    /// <exception cref="InvalidOperationException">An exception is thrown if the connection string is not provided.</exception>
+    public static void AddHealthChecksReg(this IServiceCollection serviceCollection, IConfiguration configuration)
+    {
+        var connectionString = configuration.GetConnectionString("authDb");
+        if (string.IsNullOrEmpty(connectionString))
+        {
+            throw new InvalidOperationException("Could not find a connection string named 'authDb'.");
+        }
+
+        serviceCollection.AddHealthChecksUI(options =>
+        {
+            options.SetEvaluationTimeInSeconds(10);
+            options.MaximumHistoryEntriesPerEndpoint(20);
+            options.SetApiMaxActiveRequests(10);
+            options.AddHealthCheckEndpoint(name: "Jwt auth api", uri: "/health");
+            options.SetMinimumSecondsBetweenFailureNotifications(60);
+        }).AddInMemoryStorage();
+
+        serviceCollection.AddHealthChecks().AddSqlServer(new SqlServerHealthCheckOptions
+        {
+            ConnectionString = connectionString,
+            CommandText = "select 1"
+        }, failureStatus: HealthStatus.Unhealthy, name: "authDb", tags: new[] { "Database" });
+    }
 }
