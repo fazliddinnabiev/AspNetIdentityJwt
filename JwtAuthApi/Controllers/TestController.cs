@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace JwtAuthApi.Controllers;
 
 /// <summary>
-/// 
+/// Represents test endpoints.
 /// </summary>
 [ApiController]
 [Route("[controller]")]

@@ -173,10 +173,10 @@ public static class ServiceCollectionExtensions
             throw new InvalidOperationException("Could not find a connection string named 'authDb'.");
         }
 
-        serviceCollection.AddHealthChecksUI(options =>
+        serviceCollection.AddHealthChecksUI(setupSettings: options =>
         {
-            options.SetEvaluationTimeInSeconds(10);
-            options.MaximumHistoryEntriesPerEndpoint(20);
+            options.SetEvaluationTimeInSeconds(seconds: 10);
+            options.MaximumHistoryEntriesPerEndpoint(maxValue: 20);
             options.SetApiMaxActiveRequests(10);
             options.AddHealthCheckEndpoint(name: "Jwt auth api", uri: "/health");
             options.SetMinimumSecondsBetweenFailureNotifications(60);
@@ -187,5 +187,7 @@ public static class ServiceCollectionExtensions
             ConnectionString = connectionString,
             CommandText = "select 1"
         }, failureStatus: HealthStatus.Unhealthy, name: "authDb", tags: new[] { "Database" });
+
+        serviceCollection.AddHealthChecks().AddCheck<HealthCheckExtensions>(name: "C Drive", tags: ["Disk Storage"]);
     }
 }

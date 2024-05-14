@@ -28,12 +28,16 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+app.UseRouting();
+app.UseStaticFiles();
+
 app.MapHealthChecks("/health", new HealthCheckOptions
 {
     Predicate = _ => true,
-    ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
+    ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse,
 });
-app.UseHealthChecksUI(delegate (Options options)
+
+app.MapHealthChecksUI(delegate (Options options)
 {
     options.UIPath = "/healthcheck-ui";
 });
