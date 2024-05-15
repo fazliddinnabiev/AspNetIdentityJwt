@@ -1,5 +1,6 @@
 using HealthChecks.UI.Client;
 using JwtAuthApi.extensions;
+using JwtAuthApi.Middlewares;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Options = HealthChecks.UI.Configuration.Options;
 
@@ -14,7 +15,8 @@ builder.Services.AddUserManager();
 builder.Services.AddAuthentication(builder.Configuration);
 builder.Services.AddSwaggerGenRegistry();
 builder.Services.AddUserDefinedServices();
-builder.Services.AddHealthChecksReg(builder.Configuration);
+builder.Services.AddApplicationHealthChecks(builder.Configuration);
+
 
 builder.Services.AddEndpointsApiExplorer();
 
@@ -44,6 +46,8 @@ app.MapHealthChecksUI(delegate (Options options)
 
 app.UseAuthentication();
 app.UseAuthorization();
+
+app.UseMiddleware<GlobalExceptionHandlerMiddleware>();
 
 app.MapControllers();
 
