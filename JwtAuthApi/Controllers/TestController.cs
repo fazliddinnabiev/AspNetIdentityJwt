@@ -15,8 +15,7 @@ public class TestController : ControllerBase
     /// Tests authorization for role 1.
     /// </summary>
     /// <returns>string if authorized.</returns>
-    [HttpGet]
-    [Route("role1")]
+    [HttpGet("role1")]
     [Authorize(Roles = UserRoles.Role1)]
     public string TestRole1()
     {
@@ -27,8 +26,7 @@ public class TestController : ControllerBase
     /// Tests authorization for role 2.
     /// </summary>
     /// <returns>string if authorized</returns>
-    [HttpGet]
-    [Route("role2")]
+    [HttpGet("role2")]
     [Authorize(Roles = UserRoles.Role2)]
     public string TestRole2()
     {

@@ -1,4 +1,4 @@
-using JwtAuthApi.core.Dtos;
+﻿using JwtAuthApi.core.Dtos;
 using JwtAuthApi.core.ServiceResult;
 
 namespace JwtAuthApi.core.Interfaces;

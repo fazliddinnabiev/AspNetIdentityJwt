@@ -1,7 +1,5 @@
 ﻿using JwtAuthApi.core.Dtos;
 using JwtAuthApi.core.Interfaces;
-using JwtAuthApi.core.ServiceResult;
-using JwtAuthApi.extensions;
 using Microsoft.AspNetCore.Mvc;
 
 namespace JwtAuthApi.Controllers;
@@ -20,7 +18,7 @@ public sealed class AuthController(IAuthService authService) : ApiController
     /// <returns>result of registration whether succeeded or failed.</returns>
     [HttpPost]
     [Route("signUp")]
-    public Task SignUp(RegistrationDto registrationDetails)
+    public Task SignUp([FromBody] RegistrationDto registrationDetails)
     {
         return authService.RegisterUserAsync(registrationDetails);
     }
@@ -29,11 +27,12 @@ public sealed class AuthController(IAuthService authService) : ApiController
     /// Represents an API endpoint for user sign-in.
     /// </summary>
     /// <param name="userDetails">The login details provided by the user.</param>
+    /// <param name="cancellationToken">A token that can be used to request cancellation of the asynchronous operation.</param>
     /// <returns>string that represents JWT token.</returns>
     [HttpPost("signIn")]
-    public async Task<ActionResult<string>> SignIn([FromBody]LogInDto userDetails, CancellationToken cancellationToken = default)
+    public async Task<ActionResult<string>> SignIn([FromBody] LogInDto userDetails, CancellationToken cancellationToken = default)
     {
-        var result = await authService.LogInAsync(userDetails, cancellationToken);
+        var result = await authService.AuthenticateAsync(userDetails, cancellationToken);
         return this.ToActionResult(result: result);
     }
 }
