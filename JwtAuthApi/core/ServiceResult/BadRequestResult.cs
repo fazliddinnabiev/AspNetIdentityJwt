@@ -2,7 +2,7 @@
 
 namespace JwtAuthApi.core.ServiceResult;
 
-public class BadRequestResult<T> : BaseResult<T>
+public class BadRequestResult<T> : ServiceResult<T>
 {
     private string _message;
     public BadRequestResult(string message)

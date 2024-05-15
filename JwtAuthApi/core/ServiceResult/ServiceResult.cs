@@ -2,7 +2,7 @@
 
 namespace JwtAuthApi.core.ServiceResult;
 
-public abstract class BaseResult<T>
+public abstract class ServiceResult<T>
 {
     public abstract ResultTypes ResultType { get; }
     public abstract string Errors { get; }

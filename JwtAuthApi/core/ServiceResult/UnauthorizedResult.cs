@@ -2,7 +2,7 @@
 
 namespace JwtAuthApi.core.ServiceResult
 {
-    public class UnauthorizedResult<T> : BaseResult<T>
+    public class UnauthorizedResult<T> : ServiceResult<T>
     {
         private string _message;
 

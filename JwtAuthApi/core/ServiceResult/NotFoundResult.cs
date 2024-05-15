@@ -2,7 +2,7 @@
 
 namespace JwtAuthApi.core.ServiceResult;
 
-public class NotFoundResult<T> : BaseResult<T>
+public class NotFoundResult<T> : ServiceResult<T>
 {
     private readonly string _message;
     public NotFoundResult(string message)

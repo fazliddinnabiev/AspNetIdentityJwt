@@ -2,7 +2,7 @@
 
 namespace JwtAuthApi.core.ServiceResult;
 
-public class SuccessResult<T> : BaseResult<T>
+public class SuccessResult<T> : ServiceResult<T>
 {
     private readonly T _data;
 
