@@ -27,7 +27,7 @@ public class AuthService(UserManager<IdentityUser> userManager, IConfiguration c
     }
 
     /// <inheritdoc/>
-    public async Task<ServiceResult<string>> LogInAsync(LogInDto logInDetails, CancellationToken cancellationToken)
+    public async Task<ServiceResult<string>> AuthenticateAsync(LogInDto logInDetails, CancellationToken cancellationToken)
     {
         IdentityUser? user = await userManager.FindByEmailAsync(logInDetails.Username);
         if (user is null)

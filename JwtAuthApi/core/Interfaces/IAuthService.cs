@@ -1,4 +1,4 @@
-﻿using JwtAuthApi.core.Dtos;
+using JwtAuthApi.core.Dtos;
 using JwtAuthApi.core.ServiceResult;
 
 namespace JwtAuthApi.core.Interfaces;
@@ -22,5 +22,5 @@ public interface IAuthService
     /// <param name="logInDetails">User login details. See <see cref="LogInDto"/> for more information.</param>
     /// <param name="cancellationToken">A token that can be used to request cancellation of the asynchronous operation.</param>
     /// <returns>A JWT token upon successful login.</returns>
-    Task<ServiceResult<string>> LogInAsync(LogInDto logInDetails, CancellationToken cancellationToken = default);
+    Task<ServiceResult<string>> AuthenticateAsync(LogInDto logInDetails, CancellationToken cancellationToken = default);
 }
