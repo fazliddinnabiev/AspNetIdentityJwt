@@ -12,13 +12,15 @@ public interface IAuthService
     /// Registers a user asynchronously.
     /// </summary>
     /// <param name="registrationDetails">User registration details. See <see cref="RegistrationDto"/> for more information.</param>
+    /// <param name="cancellationToken">A token that can be used to request cancellation of the asynchronous operation.</param>
     /// <returns>True if registration is successful; otherwise, false.</returns>
-    Task<BaseResult<bool>> RegisterUserAsync(RegistrationDto registrationDetails);
+    Task<ServiceResult<bool>> RegisterUserAsync(RegistrationDto registrationDetails, CancellationToken cancellationToken = default);
 
     /// <summary>
-    /// Logs in a user asynchronously.
+    /// Authenticates a user asynchronously.
     /// </summary>
     /// <param name="logInDetails">User login details. See <see cref="LogInDto"/> for more information.</param>
+    /// <param name="cancellationToken">A token that can be used to request cancellation of the asynchronous operation.</param>
     /// <returns>A JWT token upon successful login.</returns>
-    Task<BaseResult<string>> LogInAsync(LogInDto logInDetails);
+    Task<ServiceResult<string>> LogInAsync(LogInDto logInDetails, CancellationToken cancellationToken = default);
 }

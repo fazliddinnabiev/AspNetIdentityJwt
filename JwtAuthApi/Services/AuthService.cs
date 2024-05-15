@@ -1,4 +1,4 @@
-﻿using System.IdentityModel.Tokens.Jwt;
+using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using JwtAuthApi.core.Dtos;
@@ -13,12 +13,8 @@ namespace JwtAuthApi.Services;
 public class AuthService(UserManager<IdentityUser> userManager, IConfiguration configuration) : IAuthService
 {
     /// <inheritdoc/>
-    public async Task<BaseResult<bool>> RegisterUserAsync(RegistrationDto registrationDetails)
+    public async Task<ServiceResult<bool>> RegisterUserAsync(RegistrationDto registrationDetails, CancellationToken cancellationToken)
     {
-        if (registrationDetails is null)
-        {
-            return new BadRequestResult<bool>(message: "Invalid format");
-        }
         IdentityUser user = new IdentityUser
         {
             UserName = registrationDetails.Email,
@@ -31,13 +27,8 @@ public class AuthService(UserManager<IdentityUser> userManager, IConfiguration c
     }
 
     /// <inheritdoc/>
-    public async Task<BaseResult<string>> LogInAsync(LogInDto logInDetails)
+    public async Task<ServiceResult<string>> LogInAsync(LogInDto logInDetails, CancellationToken cancellationToken)
     {
-        if (string.IsNullOrEmpty(logInDetails.Username) || string.IsNullOrEmpty(logInDetails.Password))
-        {
-            return new BadRequestResult<string>(message: "Invalid format.");
-        }
-
         IdentityUser? user = await userManager.FindByEmailAsync(logInDetails.Username);
         if (user is null)
         {
