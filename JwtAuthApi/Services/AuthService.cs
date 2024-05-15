@@ -3,23 +3,22 @@ using System.Security.Claims;
 using System.Text;
 using JwtAuthApi.core.Dtos;
 using JwtAuthApi.core.Interfaces;
+using JwtAuthApi.core.ServiceResult;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
 
 namespace JwtAuthApi.Services;
 
-/// <summary>
-/// Represents the authentication service for user
-/// </summary>
+/// <inheritdoc/>
 public class AuthService(UserManager<IdentityUser> userManager, IConfiguration configuration) : IAuthService
 {
-    /// <summary>
-    /// Registers user with provided user details.
-    /// </summary>
-    /// <param name="registrationDetails">User details.</param>
-    /// <returns>True if registration succeeds, otherwise false.</returns>
-    public async Task<bool> RegisterUserAsync(RegistrationDto registrationDetails)
+    /// <inheritdoc/>
+    public async Task<BaseResult<bool>> RegisterUserAsync(RegistrationDto registrationDetails)
     {
+        if (registrationDetails is null)
+        {
+            return new BadRequestResult<bool>(message: "Invalid format");
+        }
         IdentityUser user = new IdentityUser
         {
             UserName = registrationDetails.Email,
@@ -28,44 +27,42 @@ public class AuthService(UserManager<IdentityUser> userManager, IConfiguration c
 
         var result = await userManager.CreateAsync(user, registrationDetails.Password);
         await userManager.AddToRoleAsync(user: user, registrationDetails.IdentityRole.ToString());
-        return result.Succeeded;
+        return new SuccessResult<bool>(data: true);
     }
 
-    /// <summary>
-    /// Authenticates user base on the provided credentials.
-    /// </summary>
-    /// <param name="logInDetails">User credentials</param>
-    /// <returns>JWT token if authentication succeeds.</returns>
-    public async Task<string> LogInAsync(LogInDto logInDetails)
+    /// <inheritdoc/>
+    public async Task<BaseResult<string>> LogInAsync(LogInDto logInDetails)
     {
+        if (string.IsNullOrEmpty(logInDetails.Username) || string.IsNullOrEmpty(logInDetails.Password))
+        {
+            return new BadRequestResult<string>(message: "Invalid format.");
+        }
+
         IdentityUser? user = await userManager.FindByEmailAsync(logInDetails.Username);
         if (user is null)
         {
-            throw new Exception("Email or password is incorrect.");
+            return new NotFoundResult<string>(message: "You do not have an account.");
         }
 
         bool isEmailConfirmed = await userManager.IsEmailConfirmedAsync(user: user);
         if (!isEmailConfirmed)
         {
-            throw new Exception("Email is not confirmed");
+            return new UnauthorizedResult<string>(message: "Account is not confirmed.");
         }
 
         bool passwordMatch = await userManager.CheckPasswordAsync(user: user, logInDetails.Password);
         if (!passwordMatch)
         {
-            throw new Exception("Email or password is incorrect.");
+            return new UnauthorizedResult<string>("Password or email is not correct.");
         }
-        
+
         var userRoles = await userManager.GetRolesAsync(user);
 
-        return GenerateJwtAsync(user, userRoles);
+        var jwtToken = GenerateJwtAsync(user, userRoles);
+
+        return new SuccessResult<string>(jwtToken);
     }
 
-    /// <summary>
-    /// Generates a JWT token for the authenticated user.
-    /// <param name="user">Authenticated user.</param>
-    /// </summary>
-    /// <returns>JWT token.</returns>
     private string GenerateJwtAsync(IdentityUser user, IList<string> userRoles)
     {
         var jwtKey = configuration.GetSection("JWT:Key").Value;
@@ -96,7 +93,6 @@ public class AuthService(UserManager<IdentityUser> userManager, IConfiguration c
             signingCredentials: signingKeyCredentials
         );
 
-        var jwt = new JwtSecurityTokenHandler().WriteToken(token);
-        return jwt;
+        return new JwtSecurityTokenHandler().WriteToken(token);
     }
-}   
+}

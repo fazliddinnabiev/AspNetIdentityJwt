@@ -21,9 +21,4 @@ public class RegistrationDto
     /// Represents user role.
     /// </summary>
     public IdentityRoles IdentityRole { get; init; }
-
-    /// <summary>
-    /// User's Full name.
-    /// </summary>
-    public string FullName { get; init; } = string.Empty;
 }
