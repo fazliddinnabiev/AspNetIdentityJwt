@@ -11,7 +11,7 @@ namespace JwtAuthApi.Controllers;
 /// </summary>
 [ApiController]
 [Route("[controller]")]
-public sealed class AuthController(IAuthService authService) : ControllerBase
+public sealed class AuthController(IAuthService authService) : ApiController
 {
     /// <summary>
     /// Represents an API endpoint for user registration.
@@ -30,11 +30,10 @@ public sealed class AuthController(IAuthService authService) : ControllerBase
     /// </summary>
     /// <param name="userDetails">The login details provided by the user.</param>
     /// <returns>string that represents JWT token.</returns>
-    [HttpPost]
-    [Route("signIn")]
-    public async Task<IActionResult> SignIn(LogInDto userDetails)
+    [HttpPost("signIn")]
+    public async Task<ActionResult<string>> SignIn([FromBody]LogInDto userDetails, CancellationToken cancellationToken = default)
     {
-        var result = await authService.LogInAsync(userDetails);
-        return this.FromResult(result: result);
+        var result = await authService.LogInAsync(userDetails, cancellationToken);
+        return this.ToActionResult(result: result);
     }
 }
