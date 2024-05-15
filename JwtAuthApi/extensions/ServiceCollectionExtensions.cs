@@ -2,6 +2,7 @@
 using System.Text;
 using HealthChecks.SqlServer;
 using JwtAuthApi.core.Interfaces;
+using JwtAuthApi.HealthChecks;
 using JwtAuthApi.infrastructure;
 using JwtAuthApi.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -165,7 +166,7 @@ public static class ServiceCollectionExtensions
     /// <param name="serviceCollection">An instance of type <see cref="IServiceCollection"/>.</param>
     /// <param name="configuration">The IConfiguration instance.</param>
     /// <exception cref="InvalidOperationException">An exception is thrown if the connection string is not provided.</exception>
-    public static void AddHealthChecksReg(this IServiceCollection serviceCollection, IConfiguration configuration)
+    public static void AddApplicationHealthChecks(this IServiceCollection serviceCollection, IConfiguration configuration)
     {
         var connectionString = configuration.GetConnectionString("authDb");
         if (string.IsNullOrEmpty(connectionString))
@@ -188,6 +189,24 @@ public static class ServiceCollectionExtensions
             CommandText = "select 1"
         }, failureStatus: HealthStatus.Unhealthy, name: "authDb", tags: new[] { "Database" });
 
-        serviceCollection.AddHealthChecks().AddCheck<HealthCheckExtensions>(name: "C Drive", tags: ["Disk Storage"]);
+        var cDriveHealthCheck = new HealthCheckRegistration(
+            "Health of C",
+            new DriveHealthCheck("C", healthyThresholdGb: 200, unhealthyThresholdGb: 100),
+            HealthStatus.Unhealthy,
+            new[] { "Drive" });
+
+        var dDriveHealthCheck = new HealthCheckRegistration(
+            "Health of C strict",
+            new DriveHealthCheck("C", healthyThresholdGb: 400, unhealthyThresholdGb: 300),
+            HealthStatus.Unhealthy,
+            new[] { "Drive" });
+
+        serviceCollection.AddHealthChecks()
+            .Add(cDriveHealthCheck)
+            .Add(dDriveHealthCheck);
+
+        /*serviceCollection
+            .AddHealthChecks()
+            .AddCheck<DriveHealthCheck>(name: "C Drive", tags: ["Disk Storage"]);*/
     }
 }
