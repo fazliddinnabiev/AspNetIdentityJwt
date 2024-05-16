@@ -1,16 +1,18 @@
-using System.IdentityModel.Tokens.Jwt;
+﻿using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using JwtAuthApi.core.Dtos;
 using JwtAuthApi.core.Interfaces;
+using JwtAuthApi.core.Options;
 using JwtAuthApi.core.ServiceResult;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 
 namespace JwtAuthApi.Services;
 
 /// <inheritdoc/>
-public class AuthService(UserManager<IdentityUser> userManager, IConfiguration configuration) : IAuthService
+public class AuthService(UserManager<IdentityUser> userManager, IOptions<JwtOptions> options) : IAuthService
 {
     /// <inheritdoc/>
     public async Task<ServiceResult<bool>> RegisterUserAsync(RegistrationDto registrationDetails, CancellationToken cancellationToken)
@@ -49,14 +51,15 @@ public class AuthService(UserManager<IdentityUser> userManager, IConfiguration c
 
         var userRoles = await userManager.GetRolesAsync(user);
 
-        var jwtToken = GenerateJwtAsync(user, userRoles);
+        var jwtToken = this.GenerateJwtAsync(user, userRoles);
 
         return new SuccessResult<string>(jwtToken);
     }
 
     private string GenerateJwtAsync(IdentityUser user, IList<string> userRoles)
     {
-        var jwtKey = configuration.GetSection("JWT:Key").Value;
+        var jwtOptions = options.Value;
+        var jwtKey = jwtOptions.Key;
         if (jwtKey is null)
         {
             throw new ArgumentNullException(nameof(jwtKey));
@@ -66,19 +69,19 @@ public class AuthService(UserManager<IdentityUser> userManager, IConfiguration c
         var symmetricKey = new SymmetricSecurityKey(jwtKeyBytes);
         var signingKeyCredentials = new SigningCredentials(symmetricKey, SecurityAlgorithms.HmacSha256);
 
-        var claims = new List<Claim>()
+        List<Claim> claims = new(2 + userRoles.Count)
         {
-            new Claim("userId", user.Id),
-            new Claim("userName", user.UserName)
+            new("userId", user.Id),
+            new("userName", user.UserName)
         };
 
         foreach (var userRole in userRoles)
         {
-            claims.Add(new Claim(ClaimTypes.Role, userRole));
+            claims.Add(new(ClaimTypes.Role, userRole));
         }
 
         var token = new JwtSecurityToken(
-            issuer: configuration.GetSection("JWT:ValidIssuer").Value,
+            issuer: jwtOptions.ValidIssuer,
             claims: claims,
             expires: DateTime.Now.AddMinutes(5),
             signingCredentials: signingKeyCredentials
