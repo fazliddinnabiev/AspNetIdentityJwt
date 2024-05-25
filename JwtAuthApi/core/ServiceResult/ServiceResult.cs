@@ -22,5 +22,5 @@ public abstract class ServiceResult<T>
     /// Gets the data produced by the service operation.
     /// Returns default(T) if the operation was not successful.
     /// </summary>
-    public abstract T Data { get; }
+    public abstract T? Data { get; }
 }

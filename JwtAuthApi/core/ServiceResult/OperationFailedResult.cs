@@ -7,16 +7,16 @@ namespace JwtAuthApi.core.ServiceResult;
 /// This class inherits from the <see cref="ServiceResult{T}"/> base class.
 /// </summary>
 /// <typeparam name="T">The type of data returned by the service operation.</typeparam>
-public class OperationFailedResult<T> : ServiceResult<T>
+public class OperationFailedResult<T>(string errorMessage) : ServiceResult<T>
 {
     /// <inheritdoc />
     public override ResultTypes ResultType => ResultTypes.OperationFailed;
 
     /// <inheritdoc />
-    public override string Errors { get; }
+    public override string Errors => errorMessage;
 
     /// <summary>
     /// Returns default(T) because an operation failure does not produce any data.
     /// </summary>
-    public override T Data { get; }
+    public override T? Data => default(T);
 }
