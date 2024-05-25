@@ -24,4 +24,9 @@ public enum ResultTypes
     /// The request lacks valid authentication credentials.
     /// </summary>
     Unauthorized,
+    
+    /// <summary>
+    /// Represents failure of operation.
+    /// </summary>
+    OperationFailed
 }
