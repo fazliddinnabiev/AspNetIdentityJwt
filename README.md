@@ -8,3 +8,5 @@ This is a learning project developed using .NET. The main purpose of this projec
 
 - Developed using .NET 8
 - Authentication and Authorization using JWT Bearer for API
+- Health Checks
+- Service Result pattern
