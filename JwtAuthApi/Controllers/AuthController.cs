@@ -15,12 +15,14 @@ public sealed class AuthController(IAuthService authService) : ApiController
     /// Represents an API endpoint for user registration.
     /// </summary>
     /// <param name="registrationDetails">he registration details provided by the user.<see cref="RegistrationDto"/></param>
+    /// <param name="cancellationToken"></param>
     /// <returns>result of registration whether succeeded or failed.</returns>
     [HttpPost]
     [Route("signUp")]
-    public Task SignUp([FromBody] RegistrationDto registrationDetails)
+    public async Task<ActionResult<bool>> SignUp([FromBody] RegistrationDto registrationDetails, CancellationToken cancellationToken = default)
     {
-        return authService.RegisterUserAsync(registrationDetails);
+        var result = await authService.RegisterUserAsync(registrationDetails: registrationDetails, cancellationToken: cancellationToken);
+        return this.ToActionResult(result: result);
     }
 
     /// <summary>

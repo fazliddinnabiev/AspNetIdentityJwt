@@ -43,12 +43,15 @@ app.MapHealthChecks("/health", new HealthCheckOptions
     ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse,
 });
 
-app.MapHealthChecksUI(delegate (Options options) { options.UIPath = "/healthcheck-ui"; });
+app.MapHealthChecksUI(delegate(Options options) { options.UIPath = "/healthcheck-ui"; });
 
 app.UseAuthentication();
 app.UseAuthorization();
 
-app.UseMiddleware<GlobalExceptionHandlerMiddleware>();
+if (!app.Environment.IsDevelopment())
+{
+    app.UseMiddleware<GlobalExceptionHandlerMiddleware>();
+}
 
 app.MapControllers();
 

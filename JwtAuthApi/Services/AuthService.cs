@@ -1,6 +1,7 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using System.Transactions;
 using JwtAuthApi.core.Dtos;
 using JwtAuthApi.core.Interfaces;
 using JwtAuthApi.core.Options;
@@ -23,8 +24,24 @@ public class AuthService(UserManager<IdentityUser> userManager, IOptions<JwtOpti
             Email = registrationDetails.Email,
         };
 
+        using var transaction = new TransactionScope(TransactionScopeOption.RequiresNew, TransactionScopeAsyncFlowOption.Enabled);
+
         var result = await userManager.CreateAsync(user, registrationDetails.Password);
-        await userManager.AddToRoleAsync(user: user, registrationDetails.IdentityRole.ToString());
+
+        if (!result.Succeeded)
+        {
+            return new OperationFailedResult<bool>("User registration is failed");
+        }
+
+        var roleResult = await userManager.AddToRoleAsync(user: user, registrationDetails.IdentityRole.ToString());
+
+        if (!roleResult.Succeeded)
+        {
+            return new OperationFailedResult<bool>("User role registration is failed");
+        }
+        
+        transaction.Complete();
+
         return new SuccessResult<bool>(data: true);
     }
 
